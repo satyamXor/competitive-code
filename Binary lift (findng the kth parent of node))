@@ -1,0 +1,64 @@
+// Online C++ compiler to run C++ program online
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1000005];
+
+int parent[1000005][21]; 
+void dfs20(int node, int par = 0) {
+    parent[node][0] = par; 
+    
+    for(int i = 1;i<=20;i++) {
+        parent[node][i] = parent[parent[node][i-1]][i-1]; 
+    }
+    for(auto it: adj[node]) {
+        if(it != par) {
+            dfs20(it, node); 
+            
+        }
+    }
+}
+
+void kthParent(int x,int k) {
+   int ind=0;
+    while(k) {
+        
+        if(k&1) {
+            x = parent[x][ind]; 
+        }
+            
+        ind++; 
+            
+        k = k >> 1; 
+    }
+    
+    if(x==0)
+    cout<<-1<<'\n';
+    else
+    cout<<x<<'\n'; 
+}
+
+
+int main() {
+    // Write C++ code here
+    int n,q;
+    cin>>n>>q;
+    for(int i=2;i<=n;i++){
+        
+        int u;
+        cin>>u;
+        adj[i].push_back(u);
+        adj[u].push_back(i);
+    }
+    dfs20(1);
+    while(q--){
+       
+        int x,k;
+        cin>>x>>k;
+        
+       kthParent(x,k);
+        
+    }
+    
+    return 0;
+}
