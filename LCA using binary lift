@@ -1,0 +1,79 @@
+// Online C++ compiler to run C++ program online
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> adj[1000005];
+
+int parent[1000005][21]; 
+int level[1000005];
+void dfs20(int node, int par = 0, int lev = 0) {
+    parent[node][0] = par; 
+    level[node] = lev;
+    
+    for(int i = 1;i<=20;i++) {
+        parent[node][i] = parent[parent[node][i-1]][i-1]; 
+    }
+    for(auto it: adj[node]) {
+        if(it != par) {
+            dfs20(it, node, lev + 1); 
+            
+        }
+    }
+}
+
+int lca(int u,int v) {
+    if(level[u] < level[v]) swap(u,v); 
+    
+    
+    // step 1 bring it to the same level 
+    int x = level[u] - level[v]; 
+    
+    int ind = 0;
+    while(x) {
+        
+        if(x&1) {
+            u = parent[u][ind]; 
+        }
+            
+        ind++; 
+            
+        x = x >> 1; 
+    }
+    
+    if(u==v) return u; 
+    
+    
+    // step 2 will be keep moving till unequal nodes
+    
+    for(int i = 20;i>=0;i--) {
+        if(parent[u][i] != parent[v][i]) {
+            u = parent[u][i]; 
+            v = parent[v][i]; 
+        }
+    }
+    
+    return parent[u][0]; 
+}
+
+int main() {
+    // Write C++ code here
+    int n,q;
+    cin>>n>>q;
+    for(int i=2;i<=n;i++){
+        
+        int u;
+        cin>>u;
+        adj[i].push_back(u);
+        adj[u].push_back(i);
+    }
+    dfs20(1);
+    while(q--){
+        int u,v;
+        cin>>u>>v;
+        
+        cout<<lca(u,v)<<'\n';
+        
+    }
+    
+    return 0;
+}
